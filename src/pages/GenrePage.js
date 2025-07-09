@@ -15,14 +15,12 @@ export default function GenrePage() {
   useEffect(() => {
     const fetchGenreAndArtists = async () => {
       try {
-        // Fetch genre details
         const genreDoc = await getDoc(doc(db, collections.GENRES, genreId));
         if (!genreDoc.exists()) {
           throw new Error('Género no encontrado');
         }
         setGenre({ id: genreDoc.id, ...genreDoc.data() });
 
-        // Fetch artists for this genre
         const artistsQuery = query(
           collection(db, collections.ARTISTS),
           where('genreId', '==', genreId)

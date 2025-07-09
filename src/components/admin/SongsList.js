@@ -98,21 +98,17 @@ export default function SongsList() {
     if (!songToDelete) return;
     
     try {
-      // Delete the song's audio file from storage if it exists
       if (songToDelete.audioUrl) {
         try {
           const audioRef = ref(storage, songToDelete.audioUrl);
           await deleteObject(audioRef);
         } catch (error) {
           console.warn("Error deleting song audio:", error);
-          // Continue with deletion even if audio deletion fails
         }
       }
       
-      // Delete the song document
       await deleteDoc(doc(db, collections.SONGS, songToDelete.id));
       
-      // Update the UI
       setSongs(songs.filter(song => song.id !== songToDelete.id));
     } catch (error) {
       console.error("Error deleting song: ", error);

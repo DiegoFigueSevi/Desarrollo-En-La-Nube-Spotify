@@ -100,7 +100,6 @@ export default function SongForm({ isEdit = false }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('audio/')) {
       enqueueSnackbar('Por favor, sube un archivo de audio válido', { variant: 'error' });
       return;
@@ -109,7 +108,6 @@ export default function SongForm({ isEdit = false }) {
     setAudioFile(file);
     setPreviewAudio(URL.createObjectURL(file));
     
-    // Extract duration if needed
     const audio = new Audio(URL.createObjectURL(file));
     audio.onloadedmetadata = () => {
       setSong(prev => ({
@@ -123,7 +121,6 @@ export default function SongForm({ isEdit = false }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       enqueueSnackbar('Por favor, sube un archivo de imagen válido', { variant: 'error' });
       return;
@@ -152,12 +149,10 @@ export default function SongForm({ isEdit = false }) {
       let audioUrl = song.audioUrl;
       let coverUrl = song.coverUrl;
 
-      // Upload audio file if new
       if (audioFile) {
         audioUrl = await uploadFile(audioFile, 'songs/audio');
       }
 
-      // Upload cover image if new
       if (coverFile) {
         coverUrl = await uploadFile(coverFile, 'songs/covers');
       }
@@ -170,11 +165,9 @@ export default function SongForm({ isEdit = false }) {
       };
 
       if (isEdit) {
-        // Update existing song
         await setDoc(doc(db, collections.SONGS, id), songData, { merge: true });
         enqueueSnackbar('Canción actualizada exitosamente', { variant: 'success' });
       } else {
-        // Create new song
         songData.createdAt = serverTimestamp();
         const newSongRef = doc(collection(db, collections.SONGS));
         await setDoc(newSongRef, songData);

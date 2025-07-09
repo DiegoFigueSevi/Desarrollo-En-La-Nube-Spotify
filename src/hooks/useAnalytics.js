@@ -3,21 +3,17 @@ import { useLocation } from 'react-router-dom';
 import { logEvent, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 import { analytics } from '../firebase';
 
-// Debug flag - set to false in production
 const DEBUG_ANALYTICS = true;
 
-// Custom hook for tracking page views and events
 export function useAnalytics() {
   const location = useLocation();
   
-  // Enable analytics collection (useful for development)
   useEffect(() => {
     if (analytics && typeof setAnalyticsCollectionEnabled === 'function') {
       setAnalyticsCollectionEnabled(analytics, true);
     }
   }, []);
 
-  // Track page views
   useEffect(() => {
     const trackPageView = () => {
       if (!analytics) {
@@ -46,12 +42,10 @@ export function useAnalytics() {
       }
     };
 
-    // Small delay to ensure the page title is updated
     const timer = setTimeout(trackPageView, 100);
     return () => clearTimeout(timer);
   }, [location]);
 
-  // Track custom events
   const trackEvent = useCallback((eventName, eventParams = {}) => {
     if (!analytics) {
       if (DEBUG_ANALYTICS) {
@@ -74,14 +68,11 @@ export function useAnalytics() {
   return { trackEvent };
 }
 
-// Predefined events for common actions
 export const EVENTS = {
-  // Auth events
   LOGIN: 'login',
   SIGN_UP: 'sign_up',
   LOGOUT: 'logout',
   
-  // Content interaction
   PLAY_SONG: 'play_song',
   PAUSE_SONG: 'pause_song',
   SKIP_SONG: 'skip_song',

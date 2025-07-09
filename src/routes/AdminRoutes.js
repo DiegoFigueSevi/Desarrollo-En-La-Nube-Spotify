@@ -21,7 +21,6 @@ function AdminRoutes() {
         } 
       />
       
-      {/* Genres Routes */}
       <Route 
         path="genres" 
         element={
@@ -47,7 +46,6 @@ function AdminRoutes() {
         } 
       />
       
-      {/* Artists Routes */}
       <Route 
         path="artists" 
         element={
@@ -73,7 +71,6 @@ function AdminRoutes() {
         } 
       />
       
-      {/* Songs Routes */}
       <Route 
         path="songs" 
         element={
@@ -99,7 +96,6 @@ function AdminRoutes() {
         } 
       />
       
-      {/* Catch-all route for admin section */}
       <Route 
         path="*" 
         element={

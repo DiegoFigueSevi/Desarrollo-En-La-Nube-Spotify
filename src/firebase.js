@@ -6,23 +6,19 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyA_V8tte9garBYhzlGnjApuWXcaeGxPcp8",
-  authDomain: window.location.hostname === 'localhost' 
-    ? 'desarrollo-en-la-nube-5ecf8.firebaseapp.com' 
-    : window.location.hostname,
+  authDomain: "desarrollo-en-la-nube-5ecf8.firebaseapp.com",
   projectId: "desarrollo-en-la-nube-5ecf8",
   storageBucket: "desarrollo-en-la-nube-5ecf8.firebasestorage.app",
   messagingSenderId: "498716084799",
   appId: "1:498716084799:web:8c99b9c8c3eba0bd6e068a"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 let analytics;
 
-// Initialize Analytics only in browser
 if (typeof window !== 'undefined') {
   analytics = getAnalytics(app);
 }

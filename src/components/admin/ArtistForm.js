@@ -55,7 +55,6 @@ export default function ArtistForm({ isEdit = false }) {
     }
   }, [enqueueSnackbar]);
 
-  // Fetch artist data if in edit mode
   useEffect(() => {
     const fetchArtist = async () => {
       if (!isEdit || !id) return;
@@ -111,7 +110,6 @@ export default function ArtistForm({ isEdit = false }) {
       [name]: value
     }));
     
-    // Clear error when field is edited
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -124,13 +122,11 @@ export default function ArtistForm({ isEdit = false }) {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         enqueueSnackbar('Por favor, sube un archivo de imagen válido', { variant: 'error' });
         return;
       }
       
-      // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         enqueueSnackbar('La imagen no debe superar los 2MB', { variant: 'error' });
         return;
@@ -138,7 +134,6 @@ export default function ArtistForm({ isEdit = false }) {
       
       setImageFile(file);
       
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -169,14 +164,12 @@ export default function ArtistForm({ isEdit = false }) {
     if (!imageUrl) return;
     
     try {
-      // Only delete if the image is from our storage (contains 'firebasestorage' in URL)
       if (imageUrl.includes('firebasestorage')) {
         const imageRef = ref(storage, imageUrl);
         await deleteObject(imageRef);
       }
     } catch (error) {
       console.warn('Error deleting old image:', error);
-      // Continue even if deletion fails
     }
   };
 
@@ -192,14 +185,10 @@ export default function ArtistForm({ isEdit = false }) {
     try {
       let imageUrl = artist.imageUrl;
       
-      // Upload new image if selected
       if (imageFile) {
-        // Delete old image if it exists
         if (imageUrl) {
           await deleteOldImage(imageUrl);
         }
-        
-        // Upload new image
         imageUrl = await uploadImage(imageFile);
       }
 
@@ -210,17 +199,14 @@ export default function ArtistForm({ isEdit = false }) {
       };
 
       if (!isEdit) {
-        // Create new artist
         const newArtistRef = doc(collection(db, collections.ARTISTS));
         await setDoc(newArtistRef, {
           ...artistData,
           createdAt: serverTimestamp(),
-          // Ensure genreId is always a string
           genreId: artist.genreId
         });
         enqueueSnackbar('Artista creado exitosamente', { variant: 'success' });
       } else {
-        // Update existing artist
         await setDoc(doc(db, collections.ARTISTS, id), artistData, { merge: true });
         enqueueSnackbar('Artista actualizado exitosamente', { variant: 'success' });
       }

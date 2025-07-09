@@ -5,13 +5,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 
-// Context Providers
 import { AuthProvider } from './contexts/AuthContext';
 
-// Layout
 import Layout from './components/layout/Layout';
 
-// Pages
 import HomePage from './pages/HomePage';
 import GenrePage from './pages/GenrePage';
 import ArtistPage from './pages/ArtistPage';
@@ -20,15 +17,14 @@ import Register from './components/auth/Register';
 import AdminRoutes from './routes/AdminRoutes';
 import PrivateRoute from './components/auth/PrivateRoute';
 
-// Create a theme instance
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1DB954', // Spotify green
+      main: '#1DB954',
       contrastText: '#fff',
     },
     secondary: {
-      main: '#191414', // Spotify black
+      main: '#191414',
     },
     background: {
       default: '#f5f5f5',
@@ -87,7 +83,6 @@ function App() {
         <AuthProvider>
           <Router>
             <Routes>
-              {/* Public Routes */}
               <Route path="/" element={
                 <Layout>
                   <HomePage />
@@ -118,7 +113,6 @@ function App() {
                 </Layout>
               } />
               
-              {/* Admin Routes */}
               <Route path="/admin/*" element={
                 <PrivateRoute adminOnly={true}>
                   <Layout>
@@ -127,7 +121,6 @@ function App() {
                 </PrivateRoute>
               } />
               
-              {/* 404 - Not Found */}
               <Route path="*" element={
                 <Layout>
                   <Box sx={{ textAlign: 'center', my: 8 }}>

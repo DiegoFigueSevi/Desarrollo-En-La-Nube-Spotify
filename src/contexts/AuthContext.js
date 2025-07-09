@@ -24,7 +24,6 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Sign up with email and password
   const signup = async (email, password, displayName) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -36,7 +35,6 @@ export function AuthProvider({ children }) {
         createdAt: new Date().toISOString()
       });
       
-      // Track signup event
       if (analytics) {
         logEvent(analytics, EVENTS.SIGN_UP, {
           method: 'email_password',
@@ -46,7 +44,6 @@ export function AuthProvider({ children }) {
       
       return { success: true };
     } catch (error) {
-      // Track signup error
       if (analytics) {
         logEvent(analytics, 'sign_up_error', {
           error_code: error.code,
@@ -57,12 +54,10 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Sign in with email and password
   const login = async (email, password) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       
-      // Track login event
       if (analytics) {
         logEvent(analytics, EVENTS.LOGIN, {
           method: 'email_password',
@@ -72,7 +67,6 @@ export function AuthProvider({ children }) {
       
       return userCredential;
     } catch (error) {
-      // Track login error
       if (analytics) {
         logEvent(analytics, 'login_error', {
           error_code: error.code,
@@ -84,27 +78,22 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Sign in with Google
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    // Set the client ID explicitly
     provider.setCustomParameters({
       client_id: '498716084799-l3s30a1p3i36fui7q20911t2kkd0n8pd.apps.googleusercontent.com'
     });
     try {
-      // Track Google sign-in attempt
       if (analytics) {
         logEvent(analytics, 'google_sign_in_attempt');
       }
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       
-      // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, collections.USERS, user.uid));
       const isNewUser = !userDoc.exists();
       
       if (isNewUser) {
-        // Create user in Firestore if doesn't exist
         await setDoc(doc(db, collections.USERS, user.uid), {
           uid: user.uid,
           email: user.email,
@@ -114,7 +103,6 @@ export function AuthProvider({ children }) {
           createdAt: new Date().toISOString()
         });
         
-        // Track signup event for new users
         if (analytics) {
           logEvent(analytics, EVENTS.SIGN_UP, {
             method: 'google',
@@ -123,7 +111,6 @@ export function AuthProvider({ children }) {
         }
       }
       
-      // Track successful login
       if (analytics) {
         logEvent(analytics, EVENTS.LOGIN, {
           method: 'google',
@@ -136,7 +123,6 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error("Error signing in with Google:", error);
       
-      // Track Google sign-in error
       if (analytics) {
         logEvent(analytics, 'google_sign_in_error', {
           error_code: error.code,
@@ -148,10 +134,8 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Logout
   const logout = async () => {
     try {
-      // Track logout event
       if (analytics && currentUser) {
         logEvent(analytics, EVENTS.LOGOUT, {
           user_id: currentUser.uid
@@ -165,7 +149,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Check if user is admin
   const checkAdminStatus = async (uid) => {
     if (!uid) {
       setIsAdmin(false);
@@ -185,7 +168,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Set up auth state observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);

@@ -77,7 +77,6 @@ export default function GenreForm({ isEdit = false }) {
       const file = e.target.files[0];
       setImageFile(file);
       
-      // Create preview URL
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -99,7 +98,6 @@ export default function GenreForm({ isEdit = false }) {
     setLoading(true);
     
     try {
-      // Upload image if a new one was selected
       let imageUrl = genre.imageUrl;
       if (imageFile) {
         setUploading(true);
@@ -113,16 +111,14 @@ export default function GenreForm({ isEdit = false }) {
       };
 
       if (!isEdit) {
-        // Create new genre - let Firestore auto-generate the ID
         const docRef = doc(collection(db, collections.GENRES));
         await setDoc(docRef, {
           ...genreData,
-          id: docRef.id,  // Store the auto-generated ID in the document
+          id: docRef.id,
           createdAt: serverTimestamp()
         });
         enqueueSnackbar('Género creado exitosamente', { variant: 'success' });
       } else {
-        // Update existing genre
         await setDoc(doc(db, collections.GENRES, id), genreData, { merge: true });
         enqueueSnackbar('Género actualizado exitosamente', { variant: 'success' });
       }

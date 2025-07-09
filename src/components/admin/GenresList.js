@@ -156,7 +156,6 @@ export default function GenresList() {
         </Table>
       </TableContainer>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

@@ -9,12 +9,10 @@ import { Grid, Card, CardMedia, CardContent, Typography, Box, CircularProgress }
 export default function HomePage() {
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Error state is kept for future error handling
-  // eslint-disable-next-line no-unused-vars
+
   const [_, setError] = useState('');
   const navigate = useNavigate();
-  // trackEvent is kept for future analytics events
-  // eslint-disable-next-line no-unused-vars
+
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
@@ -28,7 +26,6 @@ export default function HomePage() {
         });
         setGenres(genresList);
         
-        // Track genres loaded event
         if (analytics) {
           logEvent(analytics, 'genres_loaded', {
             count: genresList.length
@@ -38,7 +35,6 @@ export default function HomePage() {
         setError('Error al cargar los géneros');
         console.error('Error fetching genres: ', err);
         
-        // Track error event
         if (analytics) {
           logEvent(analytics, 'load_genres_error', {
             error: err.message,
@@ -54,7 +50,6 @@ export default function HomePage() {
   }, []);
 
   const handleGenreClick = (genre) => {
-    // Track genre click event
     if (analytics) {
       logEvent(analytics, EVENTS.VIEW_GENRE, {
         genre_id: genre.id,

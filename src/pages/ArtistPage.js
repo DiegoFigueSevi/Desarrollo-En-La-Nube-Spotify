@@ -28,13 +28,11 @@ export default function ArtistPage() {
   const [artist, setArtist] = useState(null);
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(true);
-  // Error state is kept for future error handling
-  // eslint-disable-next-line no-unused-vars
+
   const [_, setError] = useState('');
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  // trackEvent is kept for future analytics events
-  // eslint-disable-next-line no-unused-vars
+
   const { trackEvent } = useAnalytics();
 
   useEffect(() => {
@@ -42,7 +40,6 @@ export default function ArtistPage() {
       try {
         setLoading(true);
         
-        // Fetch artist data
         const artistDoc = await getDoc(doc(db, collections.ARTISTS, artistId));
         if (!artistDoc.exists()) {
           throw new Error('Artista no encontrado');
@@ -50,7 +47,6 @@ export default function ArtistPage() {
         const artistData = { id: artistDoc.id, ...artistDoc.data() };
         setArtist(artistData);
         
-        // Track artist view
         if (analytics) {
           logEvent(analytics, EVENTS.VIEW_ARTIST, {
             artist_id: artistId,
@@ -58,7 +54,6 @@ export default function ArtistPage() {
           });
         }
         
-        // Fetch artist's songs
         const songsQuery = query(
           collection(db, collections.SONGS),
           where('artistId', '==', artistId)
@@ -70,7 +65,6 @@ export default function ArtistPage() {
         });
         setSongs(songsList);
         
-        // Track artist songs loaded
         if (analytics) {
           logEvent(analytics, 'artist_songs_loaded', {
             artist_id: artistId,
@@ -91,11 +85,9 @@ export default function ArtistPage() {
 
   const handlePlayPause = (song) => {
     if (currentSong && currentSong.id === song.id) {
-      // Toggle play/pause for the current song
       const newIsPlaying = !isPlaying;
       setIsPlaying(newIsPlaying);
       
-      // Track play/pause event
       if (analytics) {
         logEvent(analytics, newIsPlaying ? EVENTS.PLAY_SONG : EVENTS.PAUSE_SONG, {
           song_id: song.id,
@@ -106,11 +98,9 @@ export default function ArtistPage() {
         });
       }
     } else {
-      // Play the selected song
       setCurrentSong(song);
       setIsPlaying(true);
       
-      // Track song play event
       if (analytics) {
         logEvent(analytics, EVENTS.PLAY_SONG, {
           song_id: song.id,
@@ -251,7 +241,6 @@ export default function ArtistPage() {
         )}
       </List>
       
-      {/* Audio Player */}
       {currentSong && (
         <Box 
           component="footer" 
