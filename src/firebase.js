@@ -6,7 +6,9 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyA_V8tte9garBYhzlGnjApuWXcaeGxPcp8",
-  authDomain: "desarrollo-en-la-nube-5ecf8.firebaseapp.com",
+  authDomain: window.location.hostname === 'localhost' 
+    ? 'desarrollo-en-la-nube-5ecf8.firebaseapp.com' 
+    : window.location.hostname,
   projectId: "desarrollo-en-la-nube-5ecf8",
   storageBucket: "desarrollo-en-la-nube-5ecf8.firebasestorage.app",
   messagingSenderId: "498716084799",

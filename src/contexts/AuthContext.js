@@ -87,6 +87,10 @@ export function AuthProvider({ children }) {
   // Sign in with Google
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    // Set the client ID explicitly
+    provider.setCustomParameters({
+      client_id: '498716084799-l3s30a1p3i36fui7q20911t2kkd0n8pd.apps.googleusercontent.com'
+    });
     try {
       // Track Google sign-in attempt
       if (analytics) {

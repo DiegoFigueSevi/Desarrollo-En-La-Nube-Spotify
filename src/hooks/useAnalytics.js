@@ -1,31 +1,75 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { logEvent } from 'firebase/analytics';
+import { logEvent, setAnalyticsCollectionEnabled } from 'firebase/analytics';
 import { analytics } from '../firebase';
+
+// Debug flag - set to false in production
+const DEBUG_ANALYTICS = true;
 
 // Custom hook for tracking page views and events
 export function useAnalytics() {
   const location = useLocation();
   
+  // Enable analytics collection (useful for development)
+  useEffect(() => {
+    if (analytics && typeof setAnalyticsCollectionEnabled === 'function') {
+      setAnalyticsCollectionEnabled(analytics, true);
+    }
+  }, []);
+
   // Track page views
   useEffect(() => {
-    if (analytics) {
-      logEvent(analytics, 'page_view', {
-        page_path: location.pathname + location.search,
-        page_title: document.title,
-        page_location: window.location.href,
-      });
-    }
+    const trackPageView = () => {
+      if (!analytics) {
+        if (DEBUG_ANALYTICS) {
+          console.log('[Analytics] Analytics not initialized');
+        }
+        return;
+      }
+
+      const pagePath = location.pathname + location.search;
+      const pageTitle = document.title;
+      const pageLocation = window.location.href;
+
+      if (DEBUG_ANALYTICS) {
+        console.log('[Analytics] Page view:', { pagePath, pageTitle, pageLocation });
+      }
+
+      try {
+        logEvent(analytics, 'page_view', {
+          page_path: pagePath,
+          page_title: pageTitle,
+          page_location: pageLocation,
+        });
+      } catch (error) {
+        console.error('[Analytics] Error logging page view:', error);
+      }
+    };
+
+    // Small delay to ensure the page title is updated
+    const timer = setTimeout(trackPageView, 100);
+    return () => clearTimeout(timer);
   }, [location]);
 
   // Track custom events
-  const trackEvent = (eventName, eventParams = {}) => {
-    if (analytics) {
-      logEvent(analytics, eventName, eventParams);
-    } else {
-      console.log(`[Analytics] ${eventName}`, eventParams);
+  const trackEvent = useCallback((eventName, eventParams = {}) => {
+    if (!analytics) {
+      if (DEBUG_ANALYTICS) {
+        console.log(`[Analytics] Event not sent (analytics not ready): ${eventName}`, eventParams);
+      }
+      return;
     }
-  };
+
+    if (DEBUG_ANALYTICS) {
+      console.log(`[Analytics] Event: ${eventName}`, eventParams);
+    }
+
+    try {
+      logEvent(analytics, eventName, eventParams);
+    } catch (error) {
+      console.error(`[Analytics] Error logging event ${eventName}:`, error);
+    }
+  }, []);
 
   return { trackEvent };
 }
